@@ -1,0 +1,31 @@
+Vagrant.require_plugin('vagrant-simple_cloud')
+Vagrant.require_plugin('vagrant-omnibus')
+
+Vagrant.configure('2') do |config|
+  config.omnibus.chef_version = :latest
+
+  config.ssh.username = 'tester'
+  config.ssh.private_key_path = 'test_id_rsa'
+
+  config.vm.synced_folder '.', '/vagrant', :disabled => true
+
+  config.vm.provider :simple_cloud do |provider, override|
+    override.vm.box = 'simple_cloud'
+    override.vm.box_url = "https://github.com/usbulat/vagrant-simple_cloud/raw/master/box/simple_cloud.box"
+    provider.token = ENV['DO_TOKEN']
+    provider.ssh_key_name = 'Test Key'
+  end
+
+  config.vm.provision :shell, :path => 'scripts/provision.sh'
+
+  config.vm.provision :chef_solo do |chef|
+    chef.cookbooks_path = 'cookbooks'
+    chef.add_recipe 'test'
+  end
+
+  config.vm.define :ubuntu do |ubuntu|
+    ubuntu.vm.provider :simple_cloud do |provider|
+      provider.image = '26'
+    end
+  end
+end
