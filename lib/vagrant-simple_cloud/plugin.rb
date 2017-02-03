@@ -12,7 +12,7 @@ module VagrantPlugins
         Config
       end
 
-      provider(:simple_cloud, parallel: true, defaultable: false) do
+      provider(:simple_cloud, parallel: false, defaultable: false) do
         require_relative 'provider'
         Provider
       end
