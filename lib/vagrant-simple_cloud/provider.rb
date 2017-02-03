@@ -12,9 +12,7 @@ module VagrantPlugins
 
         # load status of droplets if it has not been done before
         if !@droplets
-#          result = client.request('/v2/droplets')
           result = client.request('/v2/vps')
-#          @droplets = result['droplets']
           @droplets = result['vps']
         end
 

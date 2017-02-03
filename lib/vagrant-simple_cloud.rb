@@ -9,7 +9,7 @@ module VagrantPlugins
     end
 
     def self.public_key(private_key_path)
-      File.read("#{private_key_path}.pub") 
+      File.read("#{private_key_path}.pub")
     rescue
       raise Errors::PublicKeyError, :path => "#{private_key_path}.pub"
     end

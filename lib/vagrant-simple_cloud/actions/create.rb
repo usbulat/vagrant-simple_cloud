@@ -36,14 +36,12 @@ module VagrantPlugins
           # assign the machine id for reference in other commands
           @machine.id = result['vps']['id'].to_s
           
+          #raise 'VPS not ready, no actions_ids' unless result['vps'].has_key?('action_ids')
           result = @client.request("/v2/vps/#{@machine.id}/actions")
 
           # wait for request to complete
           env[:ui].info I18n.t('vagrant_simple_cloud.info.creating')
-          
-##########################################################################################
           @client.wait_for_event(env, result['actions'].first['id'])
-##########################################################################################
 
           # refresh droplet state with provider and output ip address
           droplet = Provider.droplet(@machine, :refresh => true)

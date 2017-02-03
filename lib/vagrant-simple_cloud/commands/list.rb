@@ -11,23 +11,27 @@ module VagrantPlugins
 
         def execute
           @token = nil
-
+          
           @opts = OptionParser.new do |o|
             o.banner = 'Usage: vagrant simplecloud-list [options] <images|regions|sizes> <token>'
 
             o.on("-r", "--[no-]regions", "show the regions when listing images") do |r|
               @regions = r
             end
+            o.on("-h", "--help", "Displays help") do
+              puts o
+              return 0
+            end
           end
-
+          
           argv = parse_options(@opts)
           @token = argv[1]
-
+          
           if @token.nil?
             usage
             return 1
           end
-
+          
           case argv[0]
           when "images"
             result = query('/v2/images')
@@ -51,7 +55,7 @@ module VagrantPlugins
           when "sizes"
             result = query('/v2/sizes')
             sizes = Array(result["sizes"])
-            sizes_table = sizes.map { |size| '%-15s %-15s %-12s' % ["#{size['memory']}MB", size['vcpus'], size['slug']] }
+            sizes_table = sizes.map { |size| '%-15s %-15s %-12s' % ["#{size['memory']}", size['vcpus'], size['slug']] }
             @env.ui.info I18n.t('vagrant_simple_cloud.info.sizes', sizes: sizes_table.sort_by{|s| s['memory']}.join("\r\n"))
           else
             usage
@@ -79,7 +83,7 @@ module VagrantPlugins
           else raise("call returned with status #{result.status}")
           end
         end
-
+        
         def usage
           @env.ui.info(@opts)
         end

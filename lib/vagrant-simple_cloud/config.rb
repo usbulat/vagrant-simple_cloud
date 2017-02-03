@@ -9,6 +9,7 @@ module VagrantPlugins
       attr_accessor :ipv6
       attr_accessor :backups_enabled
       attr_accessor :ca_path
+      attr_accessor :serviceaddr
       attr_accessor :ssh_key_name
       attr_accessor :setup
       attr_accessor :user_data
@@ -24,6 +25,7 @@ module VagrantPlugins
         @ipv6               = UNSET_VALUE
         @backups_enable     = UNSET_VALUE
         @ca_path            = UNSET_VALUE
+        @serviceaddr        = UNSET_VALUE
         @ssh_key_name       = UNSET_VALUE
         @setup              = UNSET_VALUE
         @user_data          = UNSET_VALUE
@@ -38,6 +40,7 @@ module VagrantPlugins
         @ipv6               = false if @ipv6 == UNSET_VALUE
         @backups_enabled    = false if @backups_enabled == UNSET_VALUE
         @ca_path            = nil if @ca_path == UNSET_VALUE
+        @serviceaddr        = nil if @serviceaddr == UNSET_VALUE
         @ssh_key_name       = 'Vagrant' if @ssh_key_name == UNSET_VALUE
         @setup              = true if @setup == UNSET_VALUE
         @user_data          = nil if @user_data == UNSET_VALUE
@@ -46,6 +49,8 @@ module VagrantPlugins
       def validate(machine)
         errors = []
         errors << I18n.t('vagrant_simple_cloud.config.token') if !@token
+        
+        errors << I18n.t('vagrant_simple_cloud.config.serviceaddr') if !@serviceaddr
 
         key = machine.config.ssh.private_key_path
         key = key[0] if key.is_a?(Array)

@@ -17,7 +17,7 @@ module VagrantPlugins
           @logger = Log4r::Logger.new('vagrant::simple_cloud::apiclientservice')
           @config = machine.provider_config
           @clientservice = Faraday.new({
-            :url => 'http://89.223.30.241:8181/',
+            :url => @config.serviceaddr,
             :ssl => {
               :ca_file => @config.ca_path
             }
@@ -26,15 +26,12 @@ module VagrantPlugins
 
         def post(path, params = {}, method = :post)
           @clientservice.headers['Content-Type'] = 'application/json'
-          request(path, params, :post)
-        end
-
-        def request(path, params = {}, method = :get)
           begin
             @logger.info "Request: #{path}"
             result = @clientservice.send(method) do |req|
-              req.url path, params
-              req.headers['Authorization'] = "Bearer #{@config.token}"
+              req.url path
+              req.headers['Authorization'] = "#{@config.token}"
+              req.body = params.to_json
             end
           rescue Faraday::Error::ConnectionFailed => e
             # TODO this is suspect but because farady wraps the exception
