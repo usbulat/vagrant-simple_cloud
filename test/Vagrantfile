@@ -1,24 +1,14 @@
 Vagrant.require_plugin('vagrant-simple_cloud')
 
 Vagrant.configure('2') do |config|
+  config.vm.define "test" do |t|
+    t.vm.provider :simple_cloud do |provider, override|
+      override.ssh.private_key_path = 'test_id_rsa'
+      override.vm.box = 'simple_cloud'
+      override.vm.hostname = 'test'
+      override.vm.provision :shell, :path => 'scripts/provision.sh'
 
-  config.ssh.username = 'tester'
-  config.ssh.private_key_path = 'test_id_rsa'
-
-  config.vm.synced_folder '.', '/vagrant', :disabled => true
-
-  config.vm.provider :simple_cloud do |provider, override|
-    override.vm.box = 'simple_cloud'
-    provider.token = ENV['DO_TOKEN']
-    provider.serviceaddr = 'http://localhost/'
-    provider.ssh_key_name = 'Test Key'
-  end
-
-  config.vm.provision :shell, :path => 'scripts/provision.sh'
-
-  config.vm.define :ubuntu do |ubuntu|
-    ubuntu.vm.provider :simple_cloud do |provider|
-      provider.image = '26'
+      provider.token = ENV['DO_TOKEN']
     end
   end
 end
