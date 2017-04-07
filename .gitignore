@@ -7,3 +7,5 @@
 /pkg/
 /spec/reports/
 /tmp/
+vagrant-simple_cloud.iml
+.idea
